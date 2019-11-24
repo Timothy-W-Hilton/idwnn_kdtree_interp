@@ -170,10 +170,14 @@ def find_nn_3D_kdtree(xs, ys, zs, xd, yd, zd, n_nbr):
        to each destination point.  The indices are flat indices.
 
     """
-    tree = cKDTree(zip(xs.flatten(), ys.flatten(), zs.flatten()))
-    dists, inds = tree.query(zip(xd.flatten(),
-                                 yd.flatten(),
-                                 zd.flatten()),
+    in_coords = np.dstack((xs.flatten(),
+                           ys.flatten(),
+                           zs.flatten())).squeeze()
+    tree = cKDTree(in_coords)
+    out_coords = np.dstack((xd.flatten(),
+                            yd.flatten(),
+                            zd.flatten())).squeeze()
+    dists, inds = tree.query(out_coords,
                              n_nbr)
     return dists, inds
 
@@ -203,4 +207,4 @@ def lon_lat_to_cartesian(lon, lat, R = 6371007.181000):
     x =  R * np.cos(lat_r) * np.cos(lon_r)
     y = R * np.cos(lat_r) * np.sin(lon_r)
     z = R * np.sin(lat_r)
-    return x,y,z    
+    return x,y,z
